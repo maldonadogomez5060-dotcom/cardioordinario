@@ -1,0 +1,983 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); color: var(--color-text-primary); }
+  .container { padding: 1.5rem 1rem; max-width: 680px; }
+  .tab-bar { display: flex; gap: 6px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .tab { padding: 6px 14px; border-radius: 20px; border: 0.5px solid var(--color-border-secondary); font-size: 13px; cursor: pointer; background: transparent; color: var(--color-text-secondary); transition: all 0.15s; }
+  .tab.active { background: var(--color-background-info); color: var(--color-text-info); border-color: transparent; font-weight: 500; }
+  .section { display: none; }
+  .section.active { display: block; }
+  .q-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 1rem; }
+  .q-num { font-size: 11px; font-weight: 500; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .q-text { font-size: 14px; color: var(--color-text-primary); line-height: 1.6; margin-bottom: 10px; }
+  .options { display: flex; flex-direction: column; gap: 5px; }
+  .option { font-size: 13px; padding: 6px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); color: var(--color-text-secondary); cursor: pointer; transition: background 0.1s; }
+  .option:hover { background: var(--color-background-secondary); }
+  .option.correct { background: var(--color-background-success); color: var(--color-text-success); border-color: transparent; }
+  .option.wrong { background: var(--color-background-danger); color: var(--color-text-danger); border-color: transparent; }
+  .option.revealed { background: var(--color-background-success); color: var(--color-text-success); border-color: transparent; }
+  .ecg-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; background: var(--color-background-warning); color: var(--color-text-warning); border-radius: 20px; padding: 2px 8px; margin-bottom: 8px; }
+  .concept-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 1rem; margin-bottom: 1rem; }
+  .concept-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 8px; }
+  .concept-body { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; }
+  table.data-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 0.5rem 0 1rem; }
+  table.data-table th { text-align: left; padding: 8px 10px; background: var(--color-background-secondary); font-weight: 500; font-size: 12px; color: var(--color-text-secondary); }
+  table.data-table td { padding: 7px 10px; border-top: 0.5px solid var(--color-border-tertiary); color: var(--color-text-primary); }
+  table.data-table tr:hover td { background: var(--color-background-secondary); }
+  .section-label { font-size: 12px; font-weight: 500; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; margin: 1.5rem 0 0.75rem; }
+  .score-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 1.5rem; font-size: 13px; color: var(--color-text-secondary); }
+  .score-pill { background: var(--color-background-success); color: var(--color-text-success); border-radius: 20px; padding: 2px 10px; font-weight: 500; font-size: 13px; }
+  .match-item { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .match-num { min-width: 22px; font-weight: 500; color: var(--color-text-tertiary); }
+  .match-desc { flex: 1; color: var(--color-text-secondary); line-height: 1.5; }
+  .match-answer { font-weight: 500; color: var(--color-text-info); white-space: nowrap; }
+  .hint { font-size: 12px; color: var(--color-text-tertiary); margin-top: 4px; }
+</style>
+<div class="container">
+  <h2 style="font-size:18px;font-weight:500;margin-bottom:4px;">Cardiología — Repaso por Parcial</h2>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:1.25rem;">Toca una opción para responder. Las preguntas marcadas con ⚠️ dependen de ECG no incluido.</p>
+  <div class="tab-bar">
+    <button class="tab active" onclick="showSection('p1')">1er parcial</button>
+    <button class="tab" onclick="showSection('p2')">2do parcial</button>
+    <button class="tab" onclick="showSection('p3')">3er parcial</button>
+    <button class="tab" onclick="showSection('p4')">4to parcial</button>
+  </div>
+
+  <!-- PRIMER PARCIAL -->
+  <div id="p1" class="section active">
+    <div class="section-label">Conceptos clave</div>
+    <div class="concept-card">
+      <div class="concept-title">Criterios para telerradiografía de tórax válida</div>
+      <div class="concept-body">1. Proyección postero-anterior · 2. Simetría (clavículas y esternón) · 3. Escápulas fuera de campos pulmonares · 4. Hemidiafragmas abatidos · 5. Cámara gástrica visible</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-title">Grados de congestión pulmonar (líneas de Kerley)</div>
+      <div class="concept-body"><b style="font-weight:500;">Grado I:</b> Hilios apenas prominentes · <b style="font-weight:500;">Grado II:</b> Hilios &gt;15 mm + líneas B de Kerley · <b style="font-weight:500;">Grado III:</b> Líneas A y C de Kerley (verticales y diagonales) · <b style="font-weight:500;">Grado IV:</b> Edema agudo pulmonar — patrón "alas de mariposa"</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-title">Proyecciones por estructura</div>
+      <div class="concept-body">
+        <b style="font-weight:500;">Aurícula derecha:</b> PA + oblicua anterior izquierda. Límite: ≤3 cm desde línea media a la derecha.<br>
+        <b style="font-weight:500;">Ventrículo derecho:</b> Oblicua anterior izquierda + oblicua anterior derecha.<br>
+        <b style="font-weight:500;">Aurícula izquierda:</b> Todas las proyecciones. Normal: 3 arcos; 4 arcos = crecimiento auricular izquierdo.<br>
+        <b style="font-weight:500;">Aorta:</b> Tele de tórax + oblicua anterior izquierda.
+      </div>
+    </div>
+    <div class="section-label">Tabla — Grados de cardiomegalia</div>
+    <table class="data-table">
+      <thead><tr><th>Grado</th><th>Índice cardiotorácico</th></tr></thead>
+      <tbody>
+        <tr><td>Grado I</td><td>0.51 – 0.54</td></tr>
+        <tr><td>Grado II</td><td>0.55 – 0.59</td></tr>
+        <tr><td>Grado III</td><td>0.60 – 0.64</td></tr>
+        <tr><td>Grado IV</td><td>≥ 0.65</td></tr>
+      </tbody>
+    </table>
+    <div class="section-label">Tabla — Bordes cardíacos en PA</div>
+    <table class="data-table">
+      <thead><tr><th>Borde</th><th>Estructuras (de arriba a abajo)</th></tr></thead>
+      <tbody>
+        <tr><td>Derecho</td><td>Vena ácigos → Vena cava superior → AD → Vena cava inferior (infrecuente)</td></tr>
+        <tr><td>Izquierdo</td><td>Botón aórtico → Arteria pulmonar → Ventrículo izquierdo</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SEGUNDO PARCIAL -->
+  <div id="p2" class="section">
+    <div class="score-bar">Preguntas: 28 · <span class="score-pill" id="score-p2">0 / 28</span></div>
+
+    <!-- Q1 -->
+    <div class="q-card">
+      <div class="q-num">Pregunta 1</div>
+      <div class="q-text">Masculino 21 años, atleta. ¿Cuál es la FCme al 100% que no debe superar?</div>
+      <div class="options" data-correct="3">
+        <div class="option" onclick="answer(this)">a) No más de 200 lpm</div>
+        <div class="option" onclick="answer(this)">b) No más de 150 lpm</div>
+        <div class="option" onclick="answer(this)">c) No más de una frecuencia máxima tolerada en sprint (160-180 lpm)</div>
+        <div class="option correct-def" onclick="answer(this)">d) No más de 199 lpm</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 2</div>
+      <div class="q-text">Si el paciente no alcanza la FCme en ejercicio máximo, ¿qué patrón clásico es?</div>
+      <div class="options" data-correct="1">
+        <div class="option" onclick="answer(this)">a) Disociación isorrítmica</div>
+        <div class="option correct-def" onclick="answer(this)">b) Incompetencia cronotrópica tipo I</div>
+        <div class="option" onclick="answer(this)">c) Incompetencia cronotrópica tipo II</div>
+        <div class="option" onclick="answer(this)">d) Incompetencia cronotrópica tipo III</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 3</div>
+      <div class="q-text">Principal causa de Disfunción del Nodo Sinusal (DNS):</div>
+      <div class="options" data-correct="1">
+        <div class="option" onclick="answer(this)">a) Necesidades de los marcapasos de conducción</div>
+        <div class="option correct-def" onclick="answer(this)">b) Fibroesclerosis</div>
+        <div class="option" onclick="answer(this)">c) Incompetencia funcional</div>
+        <div class="option" onclick="answer(this)">d) Mecanismo de adaptación cronotrópica</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 4</div>
+      <div class="q-text">Médico que describió y publicó por primera vez el término "disfunción del nodo sinusal":</div>
+      <div class="options" data-correct="1">
+        <div class="option" onclick="answer(this)">a) Jonathan Steno</div>
+        <div class="option correct-def" onclick="answer(this)">b) Irone Ferrer</div>
+        <div class="option" onclick="answer(this)">c) Arthur Keith y Fleck</div>
+        <div class="option" onclick="answer(this)">d) Wolf Parkinson</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 5</div>
+      <div class="q-text">Nombre de 3 extrasístoles juntas de la misma morfología entre latidos normales:</div>
+      <div class="options" data-correct="3">
+        <div class="option" onclick="answer(this)">a) Bigeminismo avanzado</div>
+        <div class="option" onclick="answer(this)">b) Trigeminismo</div>
+        <div class="option" onclick="answer(this)">c) Taquicardia ventricular no sostenida</div>
+        <div class="option correct-def" onclick="answer(this)">d) Tripleta</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 6</div>
+      <div class="ecg-badge"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Requiere ECG no disponible</div>
+      <div class="q-text">¿Cuál es el diagnóstico del trazado electrocardiográfico mostrado?</div>
+      <div class="options">
+        <div class="option">a) Síndrome de QT largo tipo 2</div>
+        <div class="option">b) Incompetencia cronotrópica</div>
+        <div class="option">c) Bloqueo AV 2do grado Mobitz I</div>
+        <div class="option">d) Síndrome de taquicardia-bradicardia</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 7</div>
+      <div class="q-text">El Síndrome de QT largo tipo 2 se caracteriza por:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Alteración de la repolarización ventricular (restablecimiento de carga eléctrica tras cada latido)</div>
+        <div class="option" onclick="answer(this)">b) Incapacidad del corazón para aumentar su FC con la actividad</div>
+        <div class="option" onclick="answer(this)">c) Taquicardias auriculares paroxísticas en pacientes con bradicardia sinusal</div>
+        <div class="option" onclick="answer(this)">d) Interrupción parcial de la transmisión de impulsos AV</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 8</div>
+      <div class="q-text">Tratamiento para síndrome de QT largo (posterior al diagnóstico):</div>
+      <div class="options" data-correct="1">
+        <div class="option" onclick="answer(this)">a) Implantar DAI como prevención primaria</div>
+        <div class="option correct-def" onclick="answer(this)">b) Vigilancia del patrón; solo si síntomas de bradicardia → valorar marcapasos</div>
+        <div class="option" onclick="answer(this)">c) Alto riesgo de BAV 2:1 o completo → marcapasos bicameral inmediato</div>
+        <div class="option" onclick="answer(this)">d) Rehabilitación cardiaca</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 9</div>
+      <div class="ecg-badge"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Requiere ECG no disponible</div>
+      <div class="q-text">Masculino 67 años, asintomático. Otro médico dice que necesita marcapasos urgente. Usted revisa el ECG. ¿Diagnóstico?</div>
+      <div class="options">
+        <div class="option">a) Bloqueo AV 1er grado</div>
+        <div class="option">b) Bloqueo AV 2do grado Mobitz I</div>
+        <div class="option">c) Bloqueo AV 2do grado Mobitz II</div>
+        <div class="option">d) Bloqueo AV 3er grado</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 10</div>
+      <div class="q-text">Recomendación para Bloqueo AV 1er grado en paciente asintomático según guías:</div>
+      <div class="options" data-correct="1">
+        <div class="option" onclick="answer(this)">a) Implante de marcapasos bicameral urgente</div>
+        <div class="option correct-def" onclick="answer(this)">b) Vigilancia de síntomas y progresión del retraso de conducción AV</div>
+        <div class="option" onclick="answer(this)">c) Prueba de Ajmalina en electrofisiología</div>
+        <div class="option" onclick="answer(this)">d) Marcapasos contraindicado por antecedente de cáncer</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 11</div>
+      <div class="ecg-badge"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Requiere ECG (foto) no disponible</div>
+      <div class="q-text">Paciente masculino con síncope y FC muy baja. Esposa le muestra foto del ECG. Impresión diagnóstica:</div>
+      <div class="options">
+        <div class="option">a) Bradicardia sinusal</div>
+        <div class="option">b) Bloqueo de salida del nodo sinusal 3er grado</div>
+        <div class="option">c) Fibrilación auricular de respuesta ventricular baja</div>
+        <div class="option">d) Bloqueo AV 2do grado Mobitz II de alto grado relación 4:1</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 12</div>
+      <div class="q-text">Recomendación al caso del paciente con síncope y bradicardia extrema:</div>
+      <div class="options" data-correct="2">
+        <div class="option" onclick="answer(this)">a) Solicitar alta voluntaria; el corazón recuperará el ritmo solo</div>
+        <div class="option" onclick="answer(this)">b) Se necesita el ECG completo para diagnóstico con certeza</div>
+        <div class="option correct-def" onclick="answer(this)">c) Amerita implante de marcapasos de urgencia</div>
+        <div class="option" onclick="answer(this)">d) Más estudios para identificar causa (drogas, intoxicación)</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 13</div>
+      <div class="q-text">Grado de recomendación (ESC/ACC/SMC) para el implante de marcapasos urgente en BAV de alto grado sintomático:</div>
+      <div class="options" data-correct="2">
+        <div class="option" onclick="answer(this)">a) Clase III</div>
+        <div class="option" onclick="answer(this)">b) Clase III</div>
+        <div class="option correct-def" onclick="answer(this)">c) Clase I</div>
+        <div class="option" onclick="answer(this)">d) Clase II</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 14</div>
+      <div class="ecg-badge"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Requiere ECG no disponible</div>
+      <div class="q-text">Paciente en urgencias: mareo, palpitaciones y 3 desvanecimientos. Monitoreo muestra trazado. Diagnóstico:</div>
+      <div class="options">
+        <div class="option">a) Bradicardia sinusal</div>
+        <div class="option">b) Bloqueo AV 2do grado Mobitz II</div>
+        <div class="option">c) Disfunción del nudo sinusal variedad pausas sinusales relación 4:1</div>
+        <div class="option">d) Bloqueo AV 3er grado</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 15</div>
+      <div class="q-text">En el caso anterior, la FC auricular es 64 lpm. ¿Cuál es la FC ventricular (por QRS)?</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) 34 lpm</div>
+        <div class="option" onclick="answer(this)">b) 62 lpm</div>
+        <div class="option" onclick="answer(this)">c) No calculable por el trastorno de conducción</div>
+        <div class="option" onclick="answer(this)">d) 112 lpm</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 16</div>
+      <div class="q-text">Diferencia principal entre bradicardia sinusal y bradicardia auricular ectópica:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Origen del impulso auricular — morfología de la onda P distinta a la habitual</div>
+        <div class="option" onclick="answer(this)">b) Uno se origina en el nodo sinusal y el otro en el nodo AV</div>
+        <div class="option" onclick="answer(this)">c) Existen 2 ritmos no relacionados entre sí con conducción variable</div>
+        <div class="option" onclick="answer(this)">d) La frecuencia: uno &lt;60 lpm y el otro &lt;40 lpm</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 17</div>
+      <div class="q-text">Clasificación de extrasístoles por sitio de origen:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Supraventriculares y ventriculares</div>
+        <div class="option" onclick="answer(this)">b) En rama izquierda o rama derecha del haz de His</div>
+        <div class="option" onclick="answer(this)">c) Auriculares y nodales</div>
+        <div class="option" onclick="answer(this)">d) Bigeminismos y trigeminismos</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 18</div>
+      <div class="ecg-badge"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Requiere ECG no disponible</div>
+      <div class="q-text">¿Cuál es el diagnóstico del trazado electrocardiográfico mostrado?</div>
+      <div class="options">
+        <div class="option">a) BAV 3er grado con fibrilación auricular</div>
+        <div class="option">b) Disfunción nodo sinusal variedad bloqueo NS 2do grado con fenómeno de Wenckebach</div>
+        <div class="option">c) BAV 2do grado Mobitz II relación 3:1</div>
+        <div class="option">d) Bradicardia sinusal</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 19</div>
+      <div class="ecg-badge"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Requiere ECG no disponible</div>
+      <div class="q-text">¿Cuál es su impresión diagnóstica del siguiente electrocardiograma?</div>
+      <div class="options">
+        <div class="option">a) Bloqueo completo de rama izquierda del haz de His</div>
+        <div class="option">b) Bloqueo completo de rama derecha del haz de His</div>
+        <div class="option">c) Bloqueo de fascículo anterior de rama izquierda</div>
+        <div class="option">d) Bloqueo de fascículo posterior de rama izquierda</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 20</div>
+      <div class="q-text">Femenino 28 años, maratonista. Su médico la suspende de toda actividad. Diagnóstico real:</div>
+      <div class="options" data-correct="1">
+        <div class="option" onclick="answer(this)">a) Taquicardia ventricular monomórfica sostenida</div>
+        <div class="option correct-def" onclick="answer(this)">b) Extrasístole ventricular aislada</div>
+        <div class="option" onclick="answer(this)">c) Extrasístole supraventricular aislada</div>
+        <div class="option" onclick="answer(this)">d) Extrasístole ventricular interpolada</div>
+      </div>
+      <div class="hint">En atletas jóvenes asintomáticos, las EV aisladas son comunes y benignas; no contraindican actividad física.</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 21</div>
+      <div class="q-text">La pausa posterior al 7mo latido (extrasístole ventricular) se considera:</div>
+      <div class="options" data-correct="2">
+        <div class="option" onclick="answer(this)">a) Periodo de acoplamiento</div>
+        <div class="option" onclick="answer(this)">b) Pausa compensadora incompleta</div>
+        <div class="option correct-def" onclick="answer(this)">c) Pausa compensadora completa</div>
+        <div class="option" onclick="answer(this)">d) Conducción aberrante</div>
+      </div>
+      <div class="hint">Las EV típicamente tienen pausa compensadora completa porque no resetean el nodo sinusal.</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 22</div>
+      <div class="q-text">La extrasístole ventricular conduce con imagen de:</div>
+      <div class="options" data-correct="2">
+        <div class="option" onclick="answer(this)">a) Bloqueo completo de rama izquierda</div>
+        <div class="option" onclick="answer(this)">b) Bloqueo incompleto de rama izquierda</div>
+        <div class="option correct-def" onclick="answer(this)">c) Bloqueo completo de rama derecha</div>
+        <div class="option" onclick="answer(this)">d) Conducción supraventricular infrahisiana</div>
+      </div>
+      <div class="hint">Las EV de origen en VI muestran patrón de bloqueo de rama derecha.</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 23</div>
+      <div class="q-text">Según clasificación de Lown y Wolf, las EV monomorfas aisladas (&lt;30/hora) corresponden a:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Clase 1</div>
+        <div class="option" onclick="answer(this)">b) Clase 2</div>
+        <div class="option" onclick="answer(this)">c) Clase 3</div>
+        <div class="option" onclick="answer(this)">d) Clase 4</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 24</div>
+      <div class="q-text">Periodo de acoplamiento fijo con igual morfología en extrasístoles significa que:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Un periodo de acoplamiento fijo con morfología sugiere un mismo origen (monofocal)</div>
+        <div class="option" onclick="answer(this)">b) Periodo variable con misma morfología alterna origen ventricular</div>
+        <div class="option" onclick="answer(this)">c) Periodo fijo con eventos polimorfos por aberrancia o dos focos</div>
+        <div class="option" onclick="answer(this)">d) Son puntos sin relevancia en trigeminismo</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 25</div>
+      <div class="q-text">¿Cuál hallazgo ECG es más probable que sea benigno y no implique cardiopatía estructural?</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Bloqueo completo de rama derecha</div>
+        <div class="option" onclick="answer(this)">b) Bloqueo completo de rama izquierda</div>
+        <div class="option" onclick="answer(this)">c) Bradicardia sinusal</div>
+        <div class="option" onclick="answer(this)">d) Disociación isoarrítmica</div>
+      </div>
+      <div class="hint">El BCRD frecuentemente es aislado y benigno en ausencia de cardiopatía estructural (QRS &lt;120 ms, sin otros hallazgos).</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 26</div>
+      <div class="ecg-badge"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Requiere ECG no disponible</div>
+      <div class="q-text">Masculino 60 años, hallazgo incidental en ECG tras infección vía aérea. ¿Diagnóstico?</div>
+      <div class="options">
+        <div class="option">a) ECG dentro de límites de normalidad</div>
+        <div class="option">b) Bradicardia sinusal</div>
+        <div class="option">c) Bradicardia sinusal ectópica</div>
+        <div class="option">d) Bloqueo de salida de 1er grado</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 27</div>
+      <div class="ecg-badge"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Requiere ECG no disponible</div>
+      <div class="q-text">La frecuencia cardíaca calculada en el caso anterior es:</div>
+      <div class="options">
+        <div class="option">a) 52 lpm</div>
+        <div class="option">b) 46 lpm</div>
+        <div class="option">c) 46 lpm pero con origen del impulso distinto al nodo sinusal</div>
+        <div class="option">d) Son puntos sin relevancia</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 28</div>
+      <div class="q-text">Plan de tratamiento para bradicardia sinusal asintomática leve (~52 lpm) en hombre de 60 años:</div>
+      <div class="options" data-correct="1">
+        <div class="option" onclick="answer(this)">a) Vigilancia estrecha para evaluar deterioro progresivo</div>
+        <div class="option correct-def" onclick="answer(this)">b) Considerar síntomas — de ellos depende si se coloca marcapasos</div>
+        <div class="option" onclick="answer(this)">c) Enviar a colocación de marcapasos de forma prioritaria</div>
+        <div class="option" onclick="answer(this)">d) Considerar estimulación hisiana</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TERCER PARCIAL -->
+  <div id="p3" class="section">
+    <div class="section-label">Conceptos clave — 3er parcial</div>
+    <div class="concept-card">
+      <div class="concept-title">Rivaroxabán — dosis en FA</div>
+      <div class="concept-body">&lt;75 años con función renal normal: 20 mg/día · &gt;75 años: 15 mg/día</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-title">Primera causa de estenosis aórtica</div>
+      <div class="concept-body">Mundial: degenerativa · México: reumática</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-title">Mortalidad en estenosis aórtica sintomática</div>
+      <div class="concept-body">Con síncope y disnea: mortalidad esperada a 2 años. El intervalo de 5 años aplica al contexto clínico descrito.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-title">Flúter típico</div>
+      <div class="concept-body">Causado por cicatriz en el istmo cavotricuspídeo. Dientes de sierra característicos del flutter inverso con conducción horaria. Tratamiento: cardioversión eléctrica 50 J.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-title">Síndrome de Brugada tipo 1</div>
+      <div class="concept-body">Patrón característico en forma de "aleta de tiburón" en V1-V2. Antecedente familiar de muerte súbita relevante. Asociado a canalopatías (sodio).</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-title">Síndrome de QT largo — genes importantes</div>
+      <div class="concept-body">Tipo 1: K⁺ (ejercicio) · Tipo 2: K⁺ (ruido) · Tipo 3: Na⁺ autosom. dominante (sueño/reposo)</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-title">Criterios diagnósticos de estenosis aórtica severa (eco)</div>
+      <div class="concept-body">Área valvular &lt;1 cm² · Gradiente medio &gt;40 mmHg · Velocidad máxima &gt;4 m/seg</div>
+    </div>
+    <div class="section-label">Preguntas — 3er parcial</div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 1</div>
+      <div class="q-text">En fibrilación auricular, ¿cuál NO es la primera medida?</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Estudio electrofisiológico inmediato como primera medida para ablación</div>
+        <div class="option" onclick="answer(this)">b) Control de frecuencia</div>
+        <div class="option" onclick="answer(this)">c) Anticoagulación según CHA₂DS₂-VASc</div>
+        <div class="option" onclick="answer(this)">d) Control del ritmo</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 2</div>
+      <div class="q-text">¿Cuál de las siguientes se cataloga como taquicardia supraventricular de RP corto?</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Reentrada auricular por vía accesoria ortodrómica</div>
+        <div class="option" onclick="answer(this)">b) Taquicardia sinusal inapropiada</div>
+        <div class="option" onclick="answer(this)">c) Taquicardia auricular focal</div>
+        <div class="option" onclick="answer(this)">d) Flutter auricular</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 3</div>
+      <div class="q-text">Criterio diagnóstico para taquicardia ventricular por ECG (criterio PAVA):</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) PAVA (onda R en aVR positiva / criterios específicos de morfología)</div>
+        <div class="option" onclick="answer(this)">b) FC &gt;150 lpm con QRS estrecho</div>
+        <div class="option" onclick="answer(this)">c) Ausencia de onda P</div>
+        <div class="option" onclick="answer(this)">d) QT corregido &gt;500 ms</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 4</div>
+      <div class="q-text">Riesgo protrombótico en FA se evalúa con:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) CHA₂DS₂-VASc (CHADS 2 en versión ampliada — también referido como PAVA en las notas)</div>
+        <div class="option" onclick="answer(this)">b) Score de Wells</div>
+        <div class="option" onclick="answer(this)">c) Score de GRACE</div>
+        <div class="option" onclick="answer(this)">d) HAS-BLED solo</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 5</div>
+      <div class="q-text">Taquicardia con FC &gt;100 lpm con al menos 3 morfologías distintas de onda P, intervalos RR, PR y PP variables:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Taquicardia auricular multifocal</div>
+        <div class="option" onclick="answer(this)">b) Fibrilación auricular</div>
+        <div class="option" onclick="answer(this)">c) Flutter auricular</div>
+        <div class="option" onclick="answer(this)">d) Taquicardia sinusal</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 6</div>
+      <div class="q-text">Dosis completa de rivaroxabán en paciente de 60 años con función renal normal:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) 20 mg/día (&lt;75 años con función renal normal)</div>
+        <div class="option" onclick="answer(this)">b) 15 mg/día</div>
+        <div class="option" onclick="answer(this)">c) 10 mg/día</div>
+        <div class="option" onclick="answer(this)">d) 2.5 mg cada 12 horas</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 7</div>
+      <div class="q-text">Primera causa de estenosis aórtica a nivel mundial:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Degenerativa (mundial) — Reumática en México</div>
+        <div class="option" onclick="answer(this)">b) Reumática en todo el mundo</div>
+        <div class="option" onclick="answer(this)">c) Congénita (válvula bicúspide)</div>
+        <div class="option" onclick="answer(this)">d) Iatrogénica por radioterapia</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 8</div>
+      <div class="q-text">Cambio fisiopatológico en estenosis aórtica que afecta el VI:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Hipertrofia concéntrica del ventrículo izquierdo</div>
+        <div class="option" onclick="answer(this)">b) Dilatación del VI con hipertrofia excéntrica</div>
+        <div class="option" onclick="answer(this)">c) Dilatación biventricular</div>
+        <div class="option" onclick="answer(this)">d) Insuficiencia diastólica pura</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 9</div>
+      <div class="q-text">Presentaciones clínicas clásicas de la estenosis aórtica (triada):</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Síncope, angina y disnea (insuficiencia cardíaca)</div>
+        <div class="option" onclick="answer(this)">b) Palpitaciones, edema y fiebre</div>
+        <div class="option" onclick="answer(this)">c) HTA, disnea y edema</div>
+        <div class="option" onclick="answer(this)">d) Dolor pleurítico, fiebre y síncope</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 10</div>
+      <div class="q-text">Mortalidad esperada a __ años con disnea y síncope en estenosis aórtica:</div>
+      <div class="options" data-correct="2">
+        <div class="option" onclick="answer(this)">a) 1 año</div>
+        <div class="option" onclick="answer(this)">b) 3 años</div>
+        <div class="option correct-def" onclick="answer(this)">c) 5 años (2 años para angina; 5 para síncope/disnea)</div>
+        <div class="option" onclick="answer(this)">d) 10 años</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 11</div>
+      <div class="q-text">Pulso arterial de ascenso lento característico de la estenosis aórtica:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Pulsus parvus et tardus</div>
+        <div class="option" onclick="answer(this)">b) Pulso de Corrigan</div>
+        <div class="option" onclick="answer(this)">c) Pulso paradójico</div>
+        <div class="option" onclick="answer(this)">d) Pulso alternante</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 12</div>
+      <div class="q-text">Cuando los soplos aórticos se irradian a vasos del cuello, el fenómeno se llama:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Fenómeno de Gallavardin</div>
+        <div class="option" onclick="answer(this)">b) Signo de Duroziez</div>
+        <div class="option" onclick="answer(this)">c) Fenómeno de Austin-Flint</div>
+        <div class="option" onclick="answer(this)">d) Signo de Hill</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 13</div>
+      <div class="q-text">La sospecha clínica de fracaso previo en el caso del masculino de 65 años (soplo 4/5 irradiado al cuello) hace pensar en:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Estenosis aórtica severa</div>
+        <div class="option" onclick="answer(this)">b) Insuficiencia mitral</div>
+        <div class="option" onclick="answer(this)">c) Estenosis mitral</div>
+        <div class="option" onclick="answer(this)">d) Insuficiencia aórtica</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 14</div>
+      <div class="q-text">Estudio de extensión para confirmar diagnóstico de estenosis aórtica:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Ecocardiograma</div>
+        <div class="option" onclick="answer(this)">b) Coronariografía</div>
+        <div class="option" onclick="answer(this)">c) TAC de tórax</div>
+        <div class="option" onclick="answer(this)">d) Cateterismo cardíaco directo</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 15</div>
+      <div class="q-text">Criterios ecocardiográficos diagnósticos de estenosis aórtica severa:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Área valvular &lt;1 cm² + gradiente medio &gt;40 mmHg + velocidad &gt;4 m/seg</div>
+        <div class="option" onclick="answer(this)">b) Área &lt;2 cm² + gradiente &gt;20 mmHg</div>
+        <div class="option" onclick="answer(this)">c) Solo velocidad &gt;3 m/seg</div>
+        <div class="option" onclick="answer(this)">d) Área &lt;1.5 cm² + gradiente &gt;60 mmHg</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 16</div>
+      <div class="q-text">Tratamiento definitivo de estenosis aórtica severa sintomática:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Reemplazo valvular (quirúrgico o TAVI)</div>
+        <div class="option" onclick="answer(this)">b) Valvuloplastia aórtica con balón</div>
+        <div class="option" onclick="answer(this)">c) Médico con betabloqueadores</div>
+        <div class="option" onclick="answer(this)">d) Ablación por radiofrecuencia</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 17</div>
+      <div class="q-text">Taquicardias ventriculares polimórficas guardan alta relación etiológica con:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Canalopatías</div>
+        <div class="option" onclick="answer(this)">b) Miocardiopatía isquémica</div>
+        <div class="option" onclick="answer(this)">c) Valvulopatía mitral</div>
+        <div class="option" onclick="answer(this)">d) Hipertensión arterial</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 18</div>
+      <div class="q-text">Pacientes con TVNS asintomática y bajo riesgo (estudio PROMISE):</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) No son candidatos a tratamiento antiarrítmico — solo vigilancia</div>
+        <div class="option" onclick="answer(this)">b) Requieren amiodarona profiláctica</div>
+        <div class="option" onclick="answer(this)">c) Implante de DAI de inicio</div>
+        <div class="option" onclick="answer(this)">d) Ablación por catéter como primera línea</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 19</div>
+      <div class="q-text">Ejemplo de taquicardia supraventricular que conduce con QRS ancho:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">b) Taquicardia supraventricular antidrómica</div>
+        <div class="option" onclick="answer(this)">a) TSV ortodrómica</div>
+        <div class="option" onclick="answer(this)">c) Taquicardia sinusal</div>
+        <div class="option" onclick="answer(this)">d) Reentrada intranodal típica</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 20</div>
+      <div class="q-text">Respuesta farmacológica esperada en taquicardia por reentrada intranodal al administrar adenosina:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Terminación súbita de la taquicardia</div>
+        <div class="option" onclick="answer(this)">b) Enlentecimiento gradual</div>
+        <div class="option" onclick="answer(this)">c) Cardioversión en senos</div>
+        <div class="option" onclick="answer(this)">d) Sin efecto</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 21</div>
+      <div class="q-text">Gen afectado en síndrome de QT largo tipo 3 (herencia autosómica dominante, ocurre durante el sueño):</div>
+      <div class="options" data-correct="3">
+        <div class="option" onclick="answer(this)">a) KCNQ1 (canal K⁺)</div>
+        <div class="option" onclick="answer(this)">b) KCNH2 (canal K⁺ tipo 2)</div>
+        <div class="option" onclick="answer(this)">c) Gen de potasio tipo 3</div>
+        <div class="option correct-def" onclick="answer(this)">d) SCN5A (canal de sodio)</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 22</div>
+      <div class="q-text">El empleo de adenosina en taquicardias es:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Método de diagnóstico diferencial y tratamiento en casos de reentrada</div>
+        <div class="option" onclick="answer(this)">b) Solo diagnóstico, nunca terapéutico</div>
+        <div class="option" onclick="answer(this)">c) Solo terapéutico en flutter</div>
+        <div class="option" onclick="answer(this)">d) Contraindicado en cualquier taquicardia regular</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 23</div>
+      <div class="ecg-badge"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Requiere ECG no disponible</div>
+      <div class="q-text">Joven 21 años con consumo de alcohol, vómito y dolor torácico. ECG muestra patrón en "aleta de tiburón":</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Brugada tipo 1</div>
+        <div class="option" onclick="answer(this)">b) Brugada tipo 2</div>
+        <div class="option" onclick="answer(this)">c) Síndrome de Wolff-Parkinson-White</div>
+        <div class="option" onclick="answer(this)">d) Síndrome de QT largo</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 24</div>
+      <div class="q-text">Antecedente de mayor relevancia a investigar en paciente con posible Brugada:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Familiares de primera línea con muerte súbita</div>
+        <div class="option" onclick="answer(this)">b) Hipertensión arterial familiar</div>
+        <div class="option" onclick="answer(this)">c) Diabetes en la familia</div>
+        <div class="option" onclick="answer(this)">d) Accidentes cerebrovasculares familiares</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 25</div>
+      <div class="ecg-badge"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Requiere ECG no disponible</div>
+      <div class="q-text">En el ECG se ven dientes de sierra. ¿Qué diagnóstico corresponde?</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Flutter típico inverso con conducción horaria</div>
+        <div class="option" onclick="answer(this)">b) Flutter atípico</div>
+        <div class="option" onclick="answer(this)">c) Fibrilación auricular</div>
+        <div class="option" onclick="answer(this)">d) Taquicardia auricular multifocal</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 26</div>
+      <div class="q-text">Tratamiento de elección para flutter auricular:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Cardioversión eléctrica sincronizada con 50 J</div>
+        <div class="option" onclick="answer(this)">b) Amiodarona IV</div>
+        <div class="option" onclick="answer(this)">c) Ablación inmediata</div>
+        <div class="option" onclick="answer(this)">d) Marcapasos antitaquicardia</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 27</div>
+      <div class="q-text">¿Por qué ocurre el flutter auricular?</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Por cicatriz en el istmo cavotricuspídeo</div>
+        <div class="option" onclick="answer(this)">b) Por fibrosis del nodo sinusal</div>
+        <div class="option" onclick="answer(this)">c) Por vía accesoria (haz de Kent)</div>
+        <div class="option" onclick="answer(this)">d) Por canalopatía de sodio</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 28</div>
+      <div class="q-text">Paciente joven 48 años, nadador, con mareo, palpitaciones y síncope. Diagnóstico en urgencias:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Taquicardia ventricular monomórfica sostenida</div>
+        <div class="option" onclick="answer(this)">b) Flutter auricular con conducción 1:1</div>
+        <div class="option" onclick="answer(this)">c) Fibrilación ventricular</div>
+        <div class="option" onclick="answer(this)">d) Taquicardia supraventricular antidrómica</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 29</div>
+      <div class="q-text">Criterios diagnósticos de TV monomórfica sostenida (criterios de Brugada, Vereckei, PAVA):</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Brugada 3: disociación AV + latidos de fusión y captura · Vereckei 1: onda R en aVR positiva · PAVA 1: onda en V2 &gt;50 ms</div>
+        <div class="option" onclick="answer(this)">b) Solo FC &gt;150 con QRS ancho</div>
+        <div class="option" onclick="answer(this)">c) QT largo + extrasístoles</div>
+        <div class="option" onclick="answer(this)">d) Presencia de onda delta en V1</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CUARTO PARCIAL -->
+  <div id="p4" class="section">
+    <div class="section-label">Preguntas — 4to parcial</div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 1</div>
+      <div class="q-text">Facies de Corvisart (rostro abotagado y violáceo, ojos brillantes, párpados hinchados) es característica de:</div>
+      <div class="options" data-correct="2">
+        <div class="option" onclick="answer(this)">a) Estenosis aórtica</div>
+        <div class="option" onclick="answer(this)">b) Estenosis mitral</div>
+        <div class="option correct-def" onclick="answer(this)">c) Estenosis tricuspídea</div>
+        <div class="option" onclick="answer(this)">d) Estenosis pulmonar</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 2</div>
+      <div class="q-text">Criterio ecocardiográfico más específico para severidad en estenosis pulmonar:</div>
+      <div class="options" data-correct="1">
+        <div class="option" onclick="answer(this)">a) Gradiente medio &gt;40 mmHg</div>
+        <div class="option correct-def" onclick="answer(this)">b) Gradiente pico &gt;64 mmHg</div>
+        <div class="option" onclick="answer(this)">c) Gradiente máximo &gt;40 mmHg</div>
+        <div class="option" onclick="answer(this)">d) Gradiente mayor que el aórtico por ≥20 mmHg</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 3</div>
+      <div class="q-text">Cámara cardíaca con incremento significativo de presión en estenosis tricuspídea severa:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Aurícula derecha</div>
+        <div class="option" onclick="answer(this)">b) Aurícula izquierda</div>
+        <div class="option" onclick="answer(this)">c) Ventrículo derecho</div>
+        <div class="option" onclick="answer(this)">d) Ventrículo izquierdo</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 4</div>
+      <div class="q-text">Primera causa de estenosis pulmonar a nivel mundial:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Secundaria a enfermedades congénitas</div>
+        <div class="option" onclick="answer(this)">b) Secundaria a tabaquismo materno</div>
+        <div class="option" onclick="answer(this)">c) Secundaria a enfermedad reumática</div>
+        <div class="option" onclick="answer(this)">d) Secundaria a enfermedad degenerativa</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 5</div>
+      <div class="q-text">¿Cuál de los siguientes NO se evalúa en el Score de Wilkins?</div>
+      <div class="options" data-correct="3">
+        <div class="option" onclick="answer(this)">a) Engrosamiento de valvas</div>
+        <div class="option" onclick="answer(this)">b) Calcificación de valvas</div>
+        <div class="option" onclick="answer(this)">c) Engrosamiento y calcificación del aparato subvalvular</div>
+        <div class="option correct-def" onclick="answer(this)">d) Gradiente transvalvular</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 6</div>
+      <div class="q-text">Puntaje de Wilkins considerado aceptable para valvuloplastia exitosa en estenosis mitral:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Menor o igual a 8</div>
+        <div class="option" onclick="answer(this)">b) Entre 9 y 10</div>
+        <div class="option" onclick="answer(this)">c) Mayor de 11</div>
+        <div class="option" onclick="answer(this)">d) Mayor de 12</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 7</div>
+      <div class="q-text">Área valvular normal de la válvula mitral:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) 4 a 6 cm²</div>
+        <div class="option" onclick="answer(this)">b) 2 a 4 cm²</div>
+        <div class="option" onclick="answer(this)">c) 1.5 a 2.5 cm²</div>
+        <div class="option" onclick="answer(this)">d) Mayor de 5 cm²</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 8</div>
+      <div class="q-text">Anticoagulantes de elección para prótesis valvular metálica:</div>
+      <div class="options" data-correct="1">
+        <div class="option" onclick="answer(this)">a) Anticoagulantes orales directos (rivaroxaban, apixaban)</div>
+        <div class="option correct-def" onclick="answer(this)">b) Anticoagulantes cumarínicos (acenocumarol, warfarina)</div>
+        <div class="option" onclick="answer(this)">c) HBPM (enoxaparina)</div>
+        <div class="option" onclick="answer(this)">d) Aspirina + clopidogrel</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 9</div>
+      <div class="q-text">Características típicas del soplo de la insuficiencia mitral:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Soplo holosistólico aspirativo irradiado hacia hueco axilar</div>
+        <div class="option" onclick="answer(this)">b) Soplo mesotelesistólico expulsivo irradiado a vasos del cuello</div>
+        <div class="option" onclick="answer(this)">c) Soplo holodiastólico en 2do EIC izquierdo hacia región subclavia</div>
+        <div class="option" onclick="answer(this)">d) Soplo holodiastólico en 4to EIC línea media clavicular sin irradiación</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 10</div>
+      <div class="q-text">Síntomas clásicos de valvulopatía tricuspídea:</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) Ascitis e ingurgitación yugular</div>
+        <div class="option" onclick="answer(this)">b) Disnea y estertores</div>
+        <div class="option" onclick="answer(this)">c) Edema cardíaco y arritmias</div>
+        <div class="option" onclick="answer(this)">d) Cardiomegalia e hipertensión venocapilar</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 11</div>
+      <div class="q-text">Patrón de remodelado ventricular en insuficiencia aórtica:</div>
+      <div class="options" data-correct="2">
+        <div class="option" onclick="answer(this)">a) Hipertrofia concéntrica</div>
+        <div class="option" onclick="answer(this)">b) Dilatación biventricular</div>
+        <div class="option correct-def" onclick="answer(this)">c) Hipertrofia excéntrica</div>
+        <div class="option" onclick="answer(this)">d) Miocardiopatía septal asimétrica</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 12</div>
+      <div class="q-text">Causa principal de la estenosis mitral en México:</div>
+      <div class="options" data-correct="2">
+        <div class="option" onclick="answer(this)">a) Etiología degenerativa</div>
+        <div class="option" onclick="answer(this)">b) Etiología reumática por S. pyogenes</div>
+        <div class="option correct-def" onclick="answer(this)">c) Etiología reumática por Streptococcus beta hemolítico</div>
+        <div class="option" onclick="answer(this)">d) Etiología congénita por válvula bivalva</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 13</div>
+      <div class="q-text">En patologías valvulares con estenosis, ¿qué cámara ve incrementada su presión sistólica?</div>
+      <div class="options" data-correct="0">
+        <div class="option correct-def" onclick="answer(this)">a) La cámara que antecede en flujo a la válvula estenótica</div>
+        <div class="option" onclick="answer(this)">b) La cámara que continúa en flujo a la válvula</div>
+        <div class="option" onclick="answer(this)">c) El VI siempre, por ser la cámara de mayor presión sistólica</div>
+        <div class="option" onclick="answer(this)">d) La circulación pulmonar principalmente</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 14</div>
+      <div class="q-text">Ejemplo de insuficiencia mitral funcional:</div>
+      <div class="options" data-correct="3">
+        <div class="option" onclick="answer(this)">a) Valvulopatía reumática (secuela de fiebre reumática)</div>
+        <div class="option" onclick="answer(this)">b) Insuficiencia mitral degenerativa</div>
+        <div class="option" onclick="answer(this)">c) Daño mitral por enfermedades de tejido conectivo</div>
+        <div class="option correct-def" onclick="answer(this)">d) Insuficiencia mitral secundaria a cardiomiopatía dilatada</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Pregunta 15</div>
+      <div class="q-text">Prótesis valvular pulmonar percutánea con bajo riesgo trombogénico:</div>
+      <div class="options" data-correct="3">
+        <div class="option" onclick="answer(this)">a) Prótesis tipo TAVI</div>
+        <div class="option" onclick="answer(this)">b) Prótesis tipo jaula bola</div>
+        <div class="option" onclick="answer(this)">c) Prótesis metálicas y/o biológicas convencionales</div>
+        <div class="option correct-def" onclick="answer(this)">d) Prótesis Melody</div>
+      </div>
+    </div>
+
+    <div class="section-label">Correlación — Signos de insuficiencia aórtica</div>
+    <div class="q-card">
+      <div class="q-num">Relaciona la descripción con el signo correcto</div>
+      <div class="q-text" style="margin-bottom:0.75rem;">Respuestas correctas:</div>
+      <div class="match-item"><span class="match-num">1.</span><span class="match-desc">Pulsación del hígado durante la sístole ventricular</span><span class="match-answer">Signo de Rosenbach</span></div>
+      <div class="match-item"><span class="match-num">2.</span><span class="match-desc">Diferencia presión sistólica femoral vs humeral ≥20 mmHg</span><span class="match-answer">Signo de Hill</span></div>
+      <div class="match-item"><span class="match-num">3.</span><span class="match-desc">Doble soplo por compresión moderada en arteria femoral</span><span class="match-answer">Signo de Duroziez</span></div>
+      <div class="match-item"><span class="match-num">4.</span><span class="match-desc">Pulsación de la arteria retiniana</span><span class="match-answer">Signo de Becker</span></div>
+      <div class="match-item"><span class="match-num">5.</span><span class="match-desc">Pulso saltón / pulso de colapso rápido percibido como golpe</span><span class="match-answer">Pulso de Corrigan</span></div>
+      <div class="match-item"><span class="match-num">6.</span><span class="match-desc">Sacudidas rítmicas al cruzar pierna sobre pierna</span><span class="match-answer">Signo de Lincoln</span></div>
+      <div class="match-item"><span class="match-num">7.</span><span class="match-desc">Sacudimientos rítmicos de la cabeza con cada latido</span><span class="match-answer">Signo de Musset</span></div>
+      <div class="match-item"><span class="match-num">8.</span><span class="match-desc">Pulsación visible de la úvula durante la sístole</span><span class="match-answer">Signo de Müller</span></div>
+      <div class="match-item"><span class="match-num">9.</span><span class="match-desc">Pulso de colapso rápido y gran amplitud (carótidas/radiales)</span><span class="match-answer">Signo de Quincke</span></div>
+      <div class="match-item"><span class="match-num">10.</span><span class="match-desc">Sonido como "disparo de pistola" en arterias femorales</span><span class="match-answer">Signo de Traube</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function answer(el) {
+  const opts = el.parentElement;
+  if (opts.querySelector('.correct') || opts.querySelector('.wrong')) return;
+  const correctIdx = parseInt(opts.getAttribute('data-correct'));
+  if (correctIdx === undefined || isNaN(correctIdx)) return;
+  const allOpts = opts.querySelectorAll('.option');
+  allOpts.forEach((o, i) => {
+    if (i === correctIdx) o.classList.add(el === o ? 'correct' : 'revealed');
+    else if (o === el) o.classList.add('wrong');
+  });
+  updateScore();
+}
+
+function updateScore() {
+  const total = document.querySelectorAll('#p2 .options[data-correct]').length;
+  const answered = document.querySelectorAll('#p2 .options .correct, #p2 .options .revealed').length;
+  const correct = document.querySelectorAll('#p2 .options .correct').length;
+  const el = document.getElementById('score-p2');
+  if (el) el.textContent = correct + ' / ' + total;
+}
+</script>
